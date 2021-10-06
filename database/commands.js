@@ -1,0 +1,120 @@
+const { Pool } = require('pg');
+const { DATABASE_URL } = require('../config.json');
+
+const pool = new Pool({
+    connectionString: DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+});
+
+async function insert_replika(params) {
+    const client = await pool.connect();
+    const query = `
+        INSERT INTO settings (
+            user_id,
+            auth_token,
+            device_id,
+            timestamp_hash,
+
+            bot_id, 
+            chat_id, 
+
+            guild_id, 
+
+            name
+        )
+        VALUES($1, $2, $3, $4, $5, $6, $7, $8)`;
+    try {
+        await client.query(
+            query,
+            [params['x-user-id'], params['x-auth-token'], params['x-device-id'], params['x-timestamp-hash'],
+                params['bot_id'], params['chat_id'],
+                params['guild_id'], params['name']],
+        );
+        return true;
+    }
+    catch (error) {
+        console.log(error);
+        return false;
+    }
+    finally {
+        client.release();
+    }
+}
+
+async function delete_replika(user_id) {
+    const client = await pool.connect();
+    const query = 'DELETE FROM settings where user_id = $1';
+    try {
+        await client.query(query, [user_id]);
+        return true;
+    }
+    catch (error) {
+        console.log(error);
+        return false;
+    }
+    finally {
+        client.release();
+    }
+}
+
+async function is_registered(user_id, guild_id) {
+    const client = await pool.connect();
+    let res;
+    try {
+        res = await client.query('SELECT * FROM settings WHERE user_id = $1', [user_id]);
+    }
+    catch (error) {
+        console.log(error);
+        return -1;
+    }
+    finally {
+        client.release();
+    }
+
+    if (res.rows.length === 0) {
+        return 0;
+    }
+    else if (res.rows[0]['guild_id'] == guild_id) {
+        return 1;
+    }
+    else {
+        return res.rows[0];
+    }
+}
+
+async function list_replikas(guild_id) {
+    const client = await pool.connect();
+    try {
+        return await client.query('SELECT * FROM settings WHERE guild_id = $1', [guild_id]);
+    }
+    catch (error) {
+        console.log(error);
+        return;
+    }
+    finally {
+        client.release();
+    }
+}
+
+async function update_name(user_id, name) {
+    const client = await pool.connect();
+    try {
+        return await client.query('UPDATE settings SET name = $1 WHERE user_id = $2', [name, user_id]);
+    }
+    catch (error) {
+        console.log(error);
+        return;
+    }
+    finally {
+        client.release();
+    }
+}
+
+
+module.exports = {
+    insert_replika: insert_replika,
+    delete_replika: delete_replika,
+    is_registered: is_registered,
+    list_replikas: list_replikas,
+    update_name: update_name,
+};
