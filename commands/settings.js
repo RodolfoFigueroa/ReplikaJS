@@ -17,7 +17,7 @@ module.exports = {
             await interaction.reply('Channel isn\'t in use.');
             return;
         }
-        if (!(current instanceof ReplikaInstance)) {
+        else if (!(current instanceof ReplikaInstance)) {
             await interaction.reply('Command not available in dialogue mode.');
             return;
         }

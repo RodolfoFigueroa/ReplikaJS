@@ -230,7 +230,6 @@ class ReplikaInstance {
     stats() {
         return new MessageEmbed()
             .setColor('#0099ff')
-            .setTitle('Stats for ' + this.name)
             .setImage(this.avatar)
             .addFields(
                 { name: 'Mood', value: this.exhaustion },
@@ -239,8 +238,7 @@ class ReplikaInstance {
                 { name: 'XP', value: this.xp.toString(), inline:true },
                 { name: 'Next level', value: this.xp_gap.toString(), inline:true },
             )
-            .setTimestamp()
-            .setAuthor('Some name', 'https://i.imgur.com/AfFp7pu.png', 'https://github.com/RodolfoFigueroa/');
+            .setTimestamp();
     }
 
     async set_avatar(url) {

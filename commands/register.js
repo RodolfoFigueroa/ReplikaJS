@@ -186,7 +186,7 @@ async function prompt_login(interaction) {
     else if (regis == 0) {
         const res = await db.insert_replika(params);
         if (res) {
-            await dm_channel.send('Registration successful!');
+            await dm_channel.send('Registration successful! You can go back to the server.');
             return 1;
         }
         else {
@@ -240,7 +240,7 @@ async function prompt_login(interaction) {
             }
             res = await db.insert_replika(params);
             if (res) {
-                await dm_channel.send('Registration successful!');
+                await dm_channel.send('Registration successful! You can go back to the server.');
                 return 1;
             }
             else {
@@ -269,7 +269,7 @@ module.exports = {
             return;
         }
         if (channels[channel_id]) {
-            await interaction.reply('Channel is in use by another Replika. Disconnect it first.');
+            await interaction.reply('Channel is in use by another Replika. Please disconnect it first.');
             return;
         }
         registering.add(guild_id);
