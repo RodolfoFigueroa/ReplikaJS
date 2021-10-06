@@ -17,7 +17,7 @@ function gen_timestamp_hash(device_id) {
 }
 
 async function get_auth(username) {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
     const page = await browser.newPage();
     await page.goto('https://my.replika.ai/login');
     await page.waitForSelector('input[id=emailOrPhone]');
