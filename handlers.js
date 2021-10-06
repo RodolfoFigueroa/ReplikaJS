@@ -45,11 +45,11 @@ class ReplikaInstance {
 
         this.name = null;
         this.exhaustion = null;
-        this.avatar = null;
         this.day_counter = null;
         this.xp = null;
         this.xp_gap = null;
         this.level = null;
+        this.avatar = params.avatar;
     }
 
     gen_payload(message, is_image = false) {
@@ -131,7 +131,6 @@ class ReplikaInstance {
         }
         this.name = profile.name;
         this.exhaustion = profile.exhaustion;
-        this.avatar = profile.avatar_v2.preview;
         this.update_level(profile);
 
         const channel_id = this.channel.id;
