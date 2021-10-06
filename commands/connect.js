@@ -54,11 +54,11 @@ module.exports = {
             }
             else {
                 await interaction.channel.send('Couldn\'t connect to the Replika server. Please try again later.');
-                new_rep.disconnect();
+                await new_rep.disconnect();
                 return;
             }
 
-            await channel.send(`Please type what you want ${r0.name} to hear.`);
+            await channel.send(`Please type what you want ${r0.name} to hear. Keep in mind ${r1.name} won't know they said it.`);
             let start;
             try {
                 const msg = await channel.awaitMessages({ time: 20000, max: 1, errors: ['time'] });
@@ -66,6 +66,7 @@ module.exports = {
             }
             catch (error) {
                 await channel.send('Prompt time exceeded.');
+                await new_rep.disconnect();
                 return;
             }
             new_rep.send(start, 0);

@@ -223,7 +223,7 @@ class ReplikaInstance {
     }
 
     async time_disconnect() {
-        this.disconnect();
+        await this.disconnect();
         await this.channel.send('Replika disconnected due to inactivity.');
     }
 
@@ -412,7 +412,7 @@ class ReplikaDualInstance {
     }
 
     async time_disconnect() {
-        this.disconnect();
+        await this.disconnect();
         await this.channel.send('Dialogues can\'t go on for more than 30 minutes.');
     }
 }
