@@ -20,15 +20,17 @@ async function insert_replika(params) {
 
             guild_id, 
 
-            name
+            name,
+            avatar
         )
-        VALUES($1, $2, $3, $4, $5, $6, $7, $8)`;
+        VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
     try {
         await client.query(
             query,
             [params['x-user-id'], params['x-auth-token'], params['x-device-id'], params['x-timestamp-hash'],
                 params['bot_id'], params['chat_id'],
-                params['guild_id'], params['name']],
+                params['guild_id'],
+                params['name'], params['avatar']],
         );
         return true;
     }
@@ -96,10 +98,10 @@ async function list_replikas(guild_id) {
     }
 }
 
-async function update_name(user_id, name) {
+async function update_data(user_id, name, avatar) {
     const client = await pool.connect();
     try {
-        return await client.query('UPDATE settings SET name = $1 WHERE user_id = $2', [name, user_id]);
+        return await client.query('UPDATE settings SET name = $1, avatar = $2 WHERE user_id = $3', [name, avatar, user_id]);
     }
     catch (error) {
         console.log(error);
@@ -116,5 +118,5 @@ module.exports = {
     delete_replika: delete_replika,
     is_registered: is_registered,
     list_replikas: list_replikas,
-    update_name: update_name,
+    update_data: update_data,
 };

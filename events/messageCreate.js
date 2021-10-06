@@ -3,14 +3,13 @@ module.exports = {
     name: 'messageCreate',
     async execute(message) {
         const channel_id = message.channel.id;
-        const data = channels[channel_id];
-        if (!data) {
+        const current = channels[channel_id];
+        if (!current) {
             return;
         }
-        const replika = data.replika;
-        if (replika instanceof ReplikaInstance && !message.author.bot) {
-            replika.send(message);
-            replika.watchdog.refresh();
+        if (current instanceof ReplikaInstance && !message.author.bot) {
+            current.send(message);
+            current.watchdog.refresh();
         }
     },
 };

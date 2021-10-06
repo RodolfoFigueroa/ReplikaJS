@@ -24,13 +24,13 @@ module.exports = {
     async execute(reaction, user) {
         const channel_id = reaction.message.channel.id;
         const current = channels[channel_id];
-        if (!current || current.replika instanceof ReplikaDualInstance) {
+        if (!current || current instanceof ReplikaDualInstance) {
             return;
         }
-        if (current.replika.last_message.discord == reaction.message.id) {
+        if (current.last_message.discord == reaction.message.id) {
             const reaction_code = reactions[reaction.emoji];
             if (reaction_code) {
-                await current.replika.send_reaction(reaction_code);
+                await current.send_reaction(reaction_code);
             }
         }
     },

@@ -1,5 +1,6 @@
 const uuid = require('uuid4');
 const WebSocket = require('ws');
+const axios = require('axios');
 const { MessageEmbed } = require('discord.js');
 
 const replika = require('./modules/replika');
@@ -23,6 +24,7 @@ class ReplikaInstance {
         this.guild_id = params.guild_id;
         this.channel = channel;
         this.last_message = { replika: null, discord: null };
+        this.ignore = false;
 
         this.chat_ids = {
             bot_id: params.bot_id,
@@ -80,6 +82,9 @@ class ReplikaInstance {
     }
 
     send(message) {
+        if (this.ignore) {
+            return;
+        }
         let payload;
         if (message.attachments.size == 0) {
             payload = this.gen_payload(message.content);
@@ -131,8 +136,7 @@ class ReplikaInstance {
 
         const channel_id = this.channel.id;
 
-        channels[channel_id] = {};
-        channels[channel_id].replika = this;
+        channels[channel_id] = this;
 
         active.add(this.auth.user_id);
 
@@ -180,7 +184,7 @@ class ReplikaInstance {
             console.log(error);
         }
         try {
-            await db.update_name(this.auth.user_id, this.name);
+            await db.update_data(this.auth.user_id, this.name);
         }
         catch (error) {
             console.log(error);
@@ -207,6 +211,23 @@ class ReplikaInstance {
             .setImage(this.avatar)
             .setTimestamp()
             .setAuthor('Some name', 'https://i.imgur.com/AfFp7pu.png', 'https://github.com/RodolfoFigueroa/');
+    }
+
+    async set_avatar(url) {
+        let res;
+        try {
+            res = await axios.head(url);
+        }
+        catch (error) {
+            return;
+        }
+        if (res.headers['content-type'].startsWith('image') && res.headers['content-length'] <= 1024 * 1024) {
+            this.avatar = url;
+            return true;
+        }
+        else {
+            return;
+        }
     }
 }
 
@@ -302,8 +323,7 @@ class ReplikaDualInstance {
 
         const channel_id = this.channel.id;
 
-        channels[channel_id] = {};
-        channels[channel_id].replika = this;
+        channels[channel_id] = this;
 
         for (let i = 0; i < 2 ; i++) {
             active.add(this.auth[i].user_id);

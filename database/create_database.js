@@ -30,7 +30,8 @@ client.query(`
 
         guild_id       BIGINT   NOT NULL,
 
-        name           VARCHAR(64)
+        name           VARCHAR(64),
+        avatar         TEXT
     );
 `, (err, res) => {
     if (err) {

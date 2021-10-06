@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { channels } = require('../handlers.js');
+const { channels, ReplikaInstance } = require('../handlers.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -7,12 +7,16 @@ module.exports = {
         .setDescription('Stats for the current Replika.'),
 
     async execute(interaction) {
-        const res = channels[interaction.channel.id];
-        if (!res) {
+        const current = channels[interaction.channel.id];
+        if (!current) {
             await interaction.reply('Channel isn\'t in use');
             return;
         }
-        const embed = res.replika.stats();
+        if (!(current instanceof ReplikaInstance)) {
+            await interaction.reply('Command not available in dialogue mode.');
+            return;
+        }
+        const embed = current.stats();
         interaction.reply({ embeds: [embed] });
     },
 };

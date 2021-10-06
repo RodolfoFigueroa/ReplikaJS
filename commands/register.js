@@ -163,11 +163,12 @@ async function prompt_login(interaction) {
     try {
         await replika.profile(auth_tokens);
         const res = await replika.chat(auth_tokens);
-        params['chat_id'] = res['id'];
-        params['bot_id'] = res['bot_id']['id'];
+        params.chat_id = res.id;
+        params.bot_id = res.bot_id.id;
 
         const profile_data = await replika.profile(auth_tokens);
-        params['name'] = profile_data['name'];
+        params.name = profile_data.name;
+        params.avatar = profile_data.avatar_v2.preview;
     }
     catch (error) {
         await dm_channel.send('Couldn\'t connect to Replika server. Please try again later.');
@@ -281,7 +282,7 @@ module.exports = {
             await interaction.editReply('Registration canceled');
         }
         else {
-            await interaction.editReply('Registration successful!');
+            await interaction.editReply('Registration successful! You can now activate your Replika with the `/connect` command.');
         }
         registering.delete(guild_id);
     },

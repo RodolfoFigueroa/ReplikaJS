@@ -10,12 +10,11 @@ module.exports = {
         const channel_id = interaction.channel.id;
         const current = channels[channel_id];
         if (!current) {
-            console.log('asd');
             await interaction.reply('Channel isn\'t in use.');
             return;
         }
         try {
-            await current.replika.disconnect();
+            await current.disconnect();
             await interaction.reply('Replika disconnected.');
         }
         catch (error) {
