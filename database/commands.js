@@ -1,6 +1,8 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 
+const prefixes = { 'full': 2, 'partial': 1, 'none': 0 };
+
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false },
@@ -98,10 +100,16 @@ async function list_replikas(guild_id) {
     }
 }
 
-async function update_data(user_id, name, avatar) {
+async function update_data(replika) {
+    const user_id = replika.auth.user_id;
+    const name = replika.name;
+    const avatar = replika.avatar;
+    const prefix = prefixes[replika.prefix];
     const client = await pool.connect();
     try {
-        return await client.query('UPDATE settings SET name = $1, avatar = $2 WHERE user_id = $3', [name, avatar, user_id]);
+        return await client.query(
+            'UPDATE settings SET name = $1, avatar = $2, prefix = $3 WHERE user_id = $4',
+            [name, avatar, prefix, user_id]);
     }
     catch (error) {
         console.log(error);

@@ -1,3 +1,4 @@
+require('dotenv').config();
 const uuid = require('uuid4');
 const WebSocket = require('ws');
 const axios = require('axios');
@@ -14,6 +15,7 @@ const base_payload = {
 };
 
 const gender_pronouns = { 'female': 'she', 'male': 'he', 'non-binary': 'they' };
+const prefixes = [ 'none', 'partial', 'full' ];
 
 const registering = new Set();
 const active = new Set();
@@ -25,6 +27,7 @@ class ReplikaInstance {
         this.channel = channel;
         this.last_message = { replika: null, discord: null };
         this.ignore = false;
+        this.member = null;
 
         this.chat_ids = {
             bot_id: params.bot_id,
@@ -50,6 +53,7 @@ class ReplikaInstance {
         this.xp_gap = null;
         this.level = null;
         this.avatar = params.avatar;
+        this.prefix = prefixes[params.prefix];
     }
 
     gen_payload(message, is_image = false) {
@@ -153,7 +157,31 @@ class ReplikaInstance {
             }
             else if (message.event_name == 'message' && message.payload.meta.nature == 'Robot') {
                 try {
-                    const sent = await this.channel.send(message.payload.content.text);
+                    const source = message.payload.meta.sources[0].characterId;
+                    let prefix = '';
+                    if (this.prefix == 'partial') {
+                        if (!source) {
+                            prefix = '(S) ';
+                        }
+                        else if (source == 'gpt2_dialog') {
+                            prefix = '(G) ';
+                        }
+                        else {
+                            prefix = '(D) ';
+                        }
+                    }
+                    else if (this.prefix == 'full') {
+                        if (!source) {
+                            prefix = '(script) ';
+                        }
+                        else if (source == 'gpt2_dialog') {
+                            prefix = '(GPT) ';
+                        }
+                        else {
+                            prefix = '(dialog) ';
+                        }
+                    }
+                    const sent = await this.channel.send(prefix + message.payload.content.text);
                     this.last_message.discord = sent.id;
                     this.last_message.replika = message.payload.id;
                 }
@@ -170,12 +198,15 @@ class ReplikaInstance {
         this.websocket.on('open', () => {
             this.connected = true;
         });
+        this.member = await this.channel.guild.members.fetch(process.env.CLIENT_ID);
+        await this.member.setNickname(this.name);
         return true;
     }
 
     async disconnect() {
         delete channels[this.channel.id];
         active.delete(this.auth.user_id);
+        await this.member.setNickname('Replika');
         try {
             this.websocket.close();
         }
@@ -183,7 +214,7 @@ class ReplikaInstance {
             console.log(error);
         }
         try {
-            await db.update_data(this.auth.user_id, this.name, this.avatar);
+            await db.update_data(this);
         }
         catch (error) {
             console.log(error);
@@ -200,6 +231,7 @@ class ReplikaInstance {
         return new MessageEmbed()
             .setColor('#0099ff')
             .setTitle('Stats for ' + this.name)
+            .setImage(this.avatar)
             .addFields(
                 { name: 'Mood', value: this.exhaustion },
                 { name: 'Age', value: this.day_counter + ' days' },
@@ -207,7 +239,6 @@ class ReplikaInstance {
                 { name: 'XP', value: this.xp.toString(), inline:true },
                 { name: 'Next level', value: this.xp_gap.toString(), inline:true },
             )
-            .setImage(this.avatar)
             .setTimestamp()
             .setAuthor('Some name', 'https://i.imgur.com/AfFp7pu.png', 'https://github.com/RodolfoFigueroa/');
     }
