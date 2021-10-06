@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
+require('dotenv').config();
 const { Client } = require('pg');
-const { DATABASE_URL } = require('../config.json');
 
 const client = new Client({
-    connectionString: DATABASE_URL,
+    connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false },
 });
 

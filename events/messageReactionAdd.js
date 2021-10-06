@@ -20,6 +20,7 @@ const reactions = {
 
 module.exports = {
     name: 'messageReactionAdd',
+    // eslint-disable-next-line no-unused-vars
     async execute(reaction, user) {
         const channel_id = reaction.message.channel.id;
         const current = channels[channel_id];
