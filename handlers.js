@@ -184,7 +184,7 @@ class ReplikaInstance {
             console.log(error);
         }
         try {
-            await db.update_data(this.auth.user_id, this.name);
+            await db.update_data(this.auth.user_id, this.name, this.avatar);
         }
         catch (error) {
             console.log(error);
