@@ -24,6 +24,7 @@ module.exports = {
             return;
         }
         else if (selected_replikas.length == 1) {
+            await interaction.channel.send('Please wait, trying to log in...');
             const new_rep = new ReplikaInstance(selected_replikas[0], channel);
             const conn_res = await new_rep.connect();
             if (!conn_res) {

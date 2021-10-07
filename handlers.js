@@ -86,7 +86,7 @@ class ReplikaInstance {
     }
 
     send(message) {
-        if (this.ignore) {
+        if (this.ignore || !this.connected) {
             return;
         }
         let payload;

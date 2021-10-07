@@ -63,7 +63,7 @@ async function select_replikas(interaction, max) {
     else {
         name_string = selected_names.slice(0, -1).join(', ') + ' & ' + selected_names.at(-1);
     }
-    await inter.reply('Selected ' + name_string);
+    await inter.reply('Selected ' + name_string + '.');
 
     return selected_replikas;
 }
