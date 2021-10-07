@@ -62,7 +62,6 @@ module.exports = {
             }
             catch (error) {
                 await interaction.channel.send('Prompt time exceeded.');
-                return;
             }
             finally {
                 current.ignore = false;

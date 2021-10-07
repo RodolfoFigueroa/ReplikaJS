@@ -443,6 +443,7 @@ module.exports = {
     registering: registering,
     active: active,
     channels: channels,
+    guilds: guilds,
     ReplikaInstance,
     ReplikaDualInstance,
 };
