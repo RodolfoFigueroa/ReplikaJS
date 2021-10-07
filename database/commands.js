@@ -61,6 +61,22 @@ async function delete_replika(user_id) {
     }
 }
 
+async function delete_guild(guild_id) {
+    const client = await pool.connect();
+    const query = 'DELETE FROM settings where guild_id = $1';
+    try {
+        await client.query(query, [guild_id]);
+        return true;
+    }
+    catch (error) {
+        console.log(error);
+        return false;
+    }
+    finally {
+        client.release();
+    }
+}
+
 async function is_registered(user_id, guild_id) {
     const client = await pool.connect();
     let res;
@@ -124,6 +140,7 @@ async function update_data(replika) {
 module.exports = {
     insert_replika: insert_replika,
     delete_replika: delete_replika,
+    delete_guild: delete_guild,
     is_registered: is_registered,
     list_replikas: list_replikas,
     update_data: update_data,

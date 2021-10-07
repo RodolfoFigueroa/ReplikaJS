@@ -20,6 +20,7 @@ const prefixes = [ 'none', 'partial', 'full' ];
 const registering = new Set();
 const active = new Set();
 const channels = {};
+const guilds = {};
 
 class ReplikaInstance {
     constructor(params, channel) {
@@ -137,9 +138,13 @@ class ReplikaInstance {
         this.exhaustion = profile.exhaustion;
         this.update_level(profile);
 
-        const channel_id = this.channel.id;
-
-        channels[channel_id] = this;
+        channels[this.channel.id] = this;
+        if (guilds[this.guild_id]) {
+            guilds[this.guild_id].add(this.channel.id);
+        }
+        else {
+            guilds[this.guild_id] = new Set([this.channel.id]);
+        }
 
         active.add(this.auth.user_id);
 
@@ -205,6 +210,7 @@ class ReplikaInstance {
 
     async disconnect() {
         delete channels[this.channel.id];
+        guilds[this.guild_id].delete(this.channel.id);
         active.delete(this.auth.user_id);
         await this.member.setNickname('Replika');
         try {
@@ -224,7 +230,12 @@ class ReplikaInstance {
 
     async time_disconnect() {
         await this.disconnect();
-        await this.channel.send('Replika disconnected due to inactivity.');
+        try {
+            await this.channel.send('Replika disconnected due to inactivity.');
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
 
     stats() {
@@ -349,9 +360,13 @@ class ReplikaDualInstance {
             }
         }
 
-        const channel_id = this.channel.id;
-
-        channels[channel_id] = this;
+        channels[this.channel.id] = this;
+        if (guilds[this.guild_id]) {
+            guilds[this.guild_id].add(this.channel.id);
+        }
+        else {
+            guilds[this.guild_id] = new Set([this.channel.id]);
+        }
 
         for (let i = 0; i < 2 ; i++) {
             active.add(this.auth[i].user_id);
@@ -399,6 +414,8 @@ class ReplikaDualInstance {
         }
 
         delete channels[this.channel.id];
+        guilds[this.guild_id].delete(this.channel.id);
+
         for (let i = 0; i < 2; i++) {
             active.delete(this.auth[i].user_id);
             try {
@@ -413,7 +430,12 @@ class ReplikaDualInstance {
 
     async time_disconnect() {
         await this.disconnect();
-        await this.channel.send('Dialogues can\'t go on for more than 30 minutes.');
+        try {
+            await this.channel.send('Dialogues can\'t go on for more than 30 minutes.');
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
 }
 
