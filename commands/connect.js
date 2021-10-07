@@ -15,7 +15,7 @@ module.exports = {
 
         const current = channels[channel_id];
         if (current) {
-            await interaction.reply('Channel already in use by another Replika. Please diconnect it first.');
+            await interaction.reply('Channel is in use by another Replika. Please diconnect it first.');
             return;
         }
 
@@ -33,7 +33,7 @@ module.exports = {
             }
             await delay(2000);
             if (new_rep.connected) {
-                await interaction.channel.send('Login successful!');
+                await interaction.channel.send('Login successful! You may start chatting now.');
             }
             else {
                 await interaction.channel.send('Couldn\'t connect to the Replika server. Please try again later.');
@@ -59,7 +59,7 @@ module.exports = {
                 return;
             }
 
-            await channel.send(`Please type what you want ${r0.name} to hear. Keep in mind ${r1.name} won't know they said it.`);
+            await channel.send(`Please type what you want ${r0.name} to hear. Keep in mind ${r1.name} won't know they said it. Use \`/disconnect\` at any time to stop.`);
             let start;
             try {
                 const msg = await channel.awaitMessages({ time: 20000, max: 1, errors: ['time'] });

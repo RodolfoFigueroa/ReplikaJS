@@ -139,7 +139,7 @@ async function prompt_login(interaction) {
         auth_tokens['x-timestamp-hash'] = replika.gen_timestamp_hash(auth_tokens['x-device-id']);
         await dm_channel.send('Verifying tokens...');
         try {
-            await replika.profile(auth_tokens);
+            await replika.get_data(auth_tokens, 'profile');
             await dm_channel.send('Tokens are correct!');
         }
         catch (error) {
@@ -161,12 +161,12 @@ async function prompt_login(interaction) {
     };
 
     try {
-        await replika.profile(auth_tokens);
-        const res = await replika.chat(auth_tokens);
+        await replika.get_data(auth_tokens, 'profile');
+        const res = await replika.get_data(auth_tokens, 'chat');
         params.chat_id = res.id;
         params.bot_id = res.bot_id.id;
 
-        const profile_data = await replika.profile(auth_tokens);
+        const profile_data = await replika.get_data(auth_tokens, 'profile');
         params.name = profile_data.name;
         params.avatar = profile_data.avatar_v2.preview;
     }

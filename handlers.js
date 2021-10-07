@@ -128,7 +128,7 @@ class ReplikaInstance {
     async connect() {
         let profile;
         try {
-            profile = await replika.profile(this.gen_auth_headers());
+            profile = await replika.get_data(this.gen_auth_headers(), 'profile');
         }
         catch (error) {
             console.log(error);
@@ -334,8 +334,8 @@ class ReplikaDualInstance {
         for (let i = 0; i < 2; i++) {
             let profile, user_profile;
             try {
-                profile = await replika.profile(headers[i]);
-                user_profile = await replika.user_profile(headers[i]);
+                profile = await replika.get_data(headers[i], 'profile');
+                user_profile = await replika.get_data(headers[i], 'user_profile');
             }
             catch (error) {
                 console.log(error);
