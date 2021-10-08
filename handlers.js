@@ -187,7 +187,8 @@ class ReplikaInstance {
                         }
                     }
                     const sent = await this.channel.send(prefix + message.payload.content.text);
-                    this.last_message.discord = sent.id;
+                    // TODO: Refactor
+                    this.last_message.discord = sent;
                     this.last_message.replika = message.payload.id;
                 }
                 catch (error) {
@@ -197,6 +198,11 @@ class ReplikaInstance {
             }
             else if (message.event_name == 'personal_bot_stats') {
                 this.update_level(message.payload);
+            }
+            else if (message.event_name == 'statement_remembered') {
+                if (message.payload.message_id == this.last_message.replika) {
+                    await this.last_message.discord.react('💭');
+                }
             }
         });
 

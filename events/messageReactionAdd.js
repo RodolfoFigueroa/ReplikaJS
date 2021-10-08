@@ -27,7 +27,7 @@ module.exports = {
         if (!current || current instanceof ReplikaDualInstance) {
             return;
         }
-        if (current.last_message.discord == reaction.message.id) {
+        if (current.last_message.discord.id == reaction.message.id) {
             const reaction_code = reactions[reaction.emoji];
             if (reaction_code) {
                 await current.send_reaction(reaction_code);
