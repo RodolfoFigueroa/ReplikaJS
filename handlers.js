@@ -2,7 +2,6 @@ require('dotenv').config();
 const uuid = require('uuid4');
 const WebSocket = require('ws');
 const axios = require('axios');
-const { MessageEmbed } = require('discord.js');
 
 const replika = require('./modules/replika');
 const db = require('./database/commands.js');
@@ -249,20 +248,6 @@ class ReplikaInstance {
         catch (error) {
             console.log(error);
         }
-    }
-
-    stats() {
-        return new MessageEmbed()
-            .setColor('#0099ff')
-            .setImage(this.avatar)
-            .addFields(
-                { name: 'Mood', value: this.exhaustion },
-                { name: 'Age', value: this.day_counter + ' days' },
-                { name: 'Level', value: this.level.toString(), inline:true },
-                { name: 'XP', value: this.xp.toString(), inline:true },
-                { name: 'Next level', value: this.xp_gap.toString(), inline:true },
-            )
-            .setTimestamp();
     }
 
     async set_avatar(url) {

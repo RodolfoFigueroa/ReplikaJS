@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const { MessageEmbed } = require('discord.js');
 const { channels, ReplikaInstance } = require('../handlers.js');
 
 module.exports = {
@@ -16,7 +17,19 @@ module.exports = {
             await interaction.reply('Command not available in dialogue mode.');
             return;
         }
-        const embed = current.stats();
+
+        const embed = new MessageEmbed()
+            .setColor('#0099ff')
+            .addFields(
+                { name: 'Mood', value: current.exhaustion },
+                { name: 'Age', value: current.day_counter + ' days' },
+                { name: 'Level', value: current.level.toString(), inline:true },
+                { name: 'XP', value: current.xp.toString(), inline:true },
+                { name: 'Next level', value: current.xp_gap.toString(), inline:true },
+            )
+            .setImage(current.avatar)
+            .setTimestamp();
+
         interaction.reply({ embeds: [embed] });
     },
 };

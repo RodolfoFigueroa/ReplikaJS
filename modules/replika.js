@@ -84,6 +84,19 @@ async function get_data(auth, endpoint) {
 }
 
 
+async function memory(auth) {
+    const user_headers = {
+        ...base_headers,
+        ...auth,
+    };
+    const response = await axios.get(
+        'https://my.replika.ai/api/mobile/1.4/memory',
+        { headers: user_headers },
+    );
+    return response;
+}
+
+
 async function change_profile(auth, name, gender) {
     const user_headers = {
         ...base_headers,
@@ -106,6 +119,7 @@ async function change_profile(auth, name, gender) {
 module.exports = {
     get_auth: get_auth,
     get_data: get_data,
+    memory: memory,
     login: login,
     gen_timestamp_hash: gen_timestamp_hash,
     change_profile: change_profile,
