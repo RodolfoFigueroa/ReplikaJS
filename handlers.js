@@ -27,6 +27,7 @@ class ReplikaInstance {
         this.guild_id = params.guild_id;
         this.channel = channel;
         this.last_message = { replika: null, discord: null };
+        this.last_user_message = { replika: null, discord: null };
         this.ignore = false;
         this.member = null;
 
@@ -100,6 +101,7 @@ class ReplikaInstance {
 
         }
         this.websocket.send(JSON.stringify(payload));
+        this.last_user_message.discord = message;
     }
 
     send_reaction(reaction) {
@@ -160,48 +162,53 @@ class ReplikaInstance {
                     console.log(error);
                 }
             }
-            else if (message.event_name == 'message' && message.payload.meta.nature == 'Robot') {
-                try {
-                    const source = message.payload.meta.sources[0].characterId;
-                    let prefix = '';
-                    if (this.prefix == 'partial') {
-                        if (!source) {
-                            prefix = '(S) ';
+            else if (message.event_name == 'message') {
+                if (message.payload.meta.nature == 'Robot') {
+                    try {
+                        const source = message.payload.meta.sources[0].characterId;
+                        let prefix = '';
+                        if (this.prefix == 'partial') {
+                            if (!source) {
+                                prefix = '(S) ';
+                            }
+                            else if (source == 'gpt2_dialog') {
+                                prefix = '(G) ';
+                            }
+                            else {
+                                prefix = '(D) ';
+                            }
                         }
-                        else if (source == 'gpt2_dialog') {
-                            prefix = '(G) ';
+                        else if (this.prefix == 'full') {
+                            if (!source) {
+                                prefix = '(script) ';
+                            }
+                            else if (source == 'gpt2_dialog') {
+                                prefix = '(GPT) ';
+                            }
+                            else {
+                                prefix = '(dialog) ';
+                            }
                         }
-                        else {
-                            prefix = '(D) ';
-                        }
+                        const sent = await this.channel.send(prefix + message.payload.content.text);
+                        // TODO: Refactor
+                        this.last_message.discord = sent;
+                        this.last_message.replika = message.payload.id;
                     }
-                    else if (this.prefix == 'full') {
-                        if (!source) {
-                            prefix = '(script) ';
-                        }
-                        else if (source == 'gpt2_dialog') {
-                            prefix = '(GPT) ';
-                        }
-                        else {
-                            prefix = '(dialog) ';
-                        }
+                    catch (error) {
+                        console.log(error);
                     }
-                    const sent = await this.channel.send(prefix + message.payload.content.text);
-                    // TODO: Refactor
-                    this.last_message.discord = sent;
-                    this.last_message.replika = message.payload.id;
+                    this.watchdog.refresh();
                 }
-                catch (error) {
-                    console.log(error);
+                else if (message.payload.meta.nature == 'Customer') {
+                    this.last_user_message.replika = message.payload.id;
                 }
-                this.watchdog.refresh();
             }
             else if (message.event_name == 'personal_bot_stats') {
                 this.update_level(message.payload);
             }
             else if (message.event_name == 'statement_remembered') {
-                if (message.payload.message_id == this.last_message.replika) {
-                    await this.last_message.discord.react('💭');
+                if (message.payload.message_id == this.last_user_message.replika) {
+                    await this.last_user_message.discord.react('💭');
                 }
             }
         });
