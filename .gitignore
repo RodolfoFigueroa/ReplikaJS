@@ -120,3 +120,4 @@ dist
 config.json
 .eslintrc.json
 .vscode
+deploy_commands_dev.js

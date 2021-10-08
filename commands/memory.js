@@ -3,16 +3,6 @@ const { MessageEmbed } = require('discord.js');
 const { channels, ReplikaInstance } = require('../handlers.js');
 const replika = require('../modules/replika.js');
 
-function get_names(array, max = 5) {
-    const rows = array.slice(0, max).map(function(x) {
-        return { name: '\u200B', value: x.text };
-    });
-
-    return new MessageEmbed()
-        .setColor('#0099ff')
-        .addFields(rows)
-        .setTimestamp();
-}
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -30,10 +20,30 @@ module.exports = {
             return;
         }
 
-        const memory = await replika.memory(current.gen_auth_headers());
-        const facts = get_names(memory.facts);
-        const people = get_names(memory.persons);
+        const memory = await replika.get_data(current.gen_auth_headers(), 'memory');
+        const facts = memory.facts.slice(0, 5).map(x => x.text).join('\n');
+        const people = memory.persons.slice(0, 5).map(x => x.name).join('\n');
+        const title = current.name + (current.name.endsWith('s') ? '\'' : '\'s') + ' memory';
 
-        interaction.reply({ embeds: [ facts, people ] });
+        let fields;
+        if (!facts) {
+            fields = { name: 'People in your life', value: people };
+        }
+        else if (!people) {
+            fields = { name: 'Facts about you', value: facts };
+        }
+        else {
+            fields = [
+                { name: 'Facts about you', value: facts },
+                { name: 'People in your life', value: people },
+            ];
+        }
+        const embed = new MessageEmbed()
+            .setTitle(title)
+            .setColor('#0099ff')
+            .setTitle(title)
+            .addFields(fields)
+            .setTimestamp();
+        interaction.reply({ embeds: [ embed ] });
     },
 };
