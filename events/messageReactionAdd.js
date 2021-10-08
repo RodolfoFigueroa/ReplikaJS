@@ -24,7 +24,10 @@ module.exports = {
     async execute(reaction, user) {
         const channel_id = reaction.message.channel.id;
         const current = channels[channel_id];
-        if (!current || current instanceof ReplikaDualInstance) {
+        if (!current ||
+            !current.last_message.discord ||
+            user.bot ||
+            current instanceof ReplikaDualInstance) {
             return;
         }
         if (current.last_message.discord.id == reaction.message.id) {
