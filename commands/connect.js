@@ -27,10 +27,15 @@ module.exports = {
             await interaction.channel.send('Please wait, trying to log in...');
             const new_rep = new ReplikaInstance(selected_replikas[0], channel);
             const conn_res = await new_rep.connect();
-            if (!conn_res) {
+            if (conn_res == -1) {
                 await interaction.channel.send('Couldn\'t connect to the Replika server. Please try again later.');
                 return;
             }
+            else if (conn_res == 0) {
+                await interaction.channel.send('Device wasn\'t authenticated. Please unregister your Replika with `/unregister` and then register it again.');
+                return;
+            }
+
             await delay(2000);
             if (new_rep.connected) {
                 await interaction.channel.send('Login successful! You may start chatting now.');

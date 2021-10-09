@@ -22,7 +22,7 @@ async function select_replikas(interaction, max) {
 
     const buttons = rows.map(function(row) {
         return {
-            label: row.name,
+            label: row.name ? row.name : '\u200B',
             value: row.user_id,
         };
     });
@@ -64,7 +64,6 @@ async function select_replikas(interaction, max) {
         name_string = selected_names.slice(0, -1).join(', ') + ' & ' + selected_names.at(-1);
     }
     await inter.reply('Selected ' + name_string + '.');
-
     return selected_replikas;
 }
 

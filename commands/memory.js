@@ -22,7 +22,7 @@ module.exports = {
 
         const memory = await replika.get_data(current.gen_auth_headers(), 'memory');
         const facts = memory.facts.slice(0, 5).map(x => x.text).join('\n');
-        const people = memory.persons.slice(0, 5).map(x => x.name).join('\n');
+        const people = memory.persons.slice(0, 5).map(x => x.name + ' (' + x.relation + ')').join('\n');
         const title = current.name + (current.name.endsWith('s') ? '\'' : '\'s') + ' memory';
 
         let fields;

@@ -47,7 +47,7 @@ class ReplikaInstance {
 
         this.watchdog = setTimeout(this.time_disconnect.bind(this), 5 * 60 * 1000);
 
-        this.name = null;
+        this.name = params.name;
         this.exhaustion = null;
         this.day_counter = null;
         this.xp = null;
@@ -127,18 +127,6 @@ class ReplikaInstance {
     }
 
     async connect() {
-        let profile;
-        try {
-            profile = await replika.get_data(this.gen_auth_headers(), 'profile');
-        }
-        catch (error) {
-            console.log(error);
-            return;
-        }
-        this.name = profile.name;
-        this.exhaustion = profile.exhaustion;
-        this.update_level(profile);
-
         channels[this.channel.id] = this;
         if (guilds[this.guild_id]) {
             guilds[this.guild_id].add(this.channel.id);
@@ -146,8 +134,26 @@ class ReplikaInstance {
         else {
             guilds[this.guild_id] = new Set([this.channel.id]);
         }
-
         active.add(this.auth.user_id);
+
+        let profile;
+        try {
+            profile = await replika.get_data(this.gen_auth_headers(), 'profile');
+        }
+        catch (error) {
+            if (error.response && error.response.status == 401) {
+                await this.disconnect();
+                return 0;
+            }
+            else {
+                console.log(error);
+                await this.disconnect();
+                return -1;
+            }
+        }
+        this.name = profile.name;
+        this.exhaustion = profile.exhaustion;
+        this.update_level(profile);
 
         this.websocket = new WebSocket('wss://ws.replika.ai/v17');
 
@@ -217,19 +223,23 @@ class ReplikaInstance {
         });
         this.member = await this.channel.guild.members.fetch(process.env.CLIENT_ID);
         await this.member.setNickname(this.name);
-        return true;
+        return 1;
     }
 
     async disconnect() {
         delete channels[this.channel.id];
         guilds[this.guild_id].delete(this.channel.id);
         active.delete(this.auth.user_id);
-        await this.member.setNickname('Replika');
-        try {
-            this.websocket.close();
+        if (this.member) {
+            await this.member.setNickname('Replika');
         }
-        catch (error) {
-            console.log(error);
+        if (this.websocket) {
+            try {
+                this.websocket.close();
+            }
+            catch (error) {
+                console.log(error);
+            }
         }
         try {
             await db.update_data(this);
