@@ -25,6 +25,8 @@ The repository is set up to integrate automatically with Heroku, just create a n
 You'll need a PostgreSQL database with the following schema:
 
 ```
+TABLE settings
+
 user_id        CHAR(24) NOT NULL  PRIMARY KEY,
 auth_token     UUID     NOT NULL,
 device_id      UUID     NOT NULL,
