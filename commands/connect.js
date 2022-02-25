@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { channels, ReplikaInstance, ReplikaDualInstance } = require('../handlers.js');
+const { channels, ReplikaInstance, ReplikaDualInstance, active } = require('../handlers.js');
 const { select_replikas } = require('../modules/common.js');
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -15,7 +15,7 @@ module.exports = {
 
         const current = channels[channel_id];
         if (current) {
-            await interaction.reply('Channel is in use by another Replika. Please diconnect it first.');
+            await interaction.reply('Channel is in use by another Replika. Please disconnect it first.');
             return;
         }
 
@@ -24,8 +24,14 @@ module.exports = {
             return;
         }
         else if (selected_replikas.length == 1) {
+            const replika = selected_replikas[0];
+            if (active.has(replika.user_id)) {
+                await interaction.channel.send('Replika is already active. Please disconnect it first.');
+                return;
+            }
+
             await interaction.channel.send('Please wait, trying to log in...');
-            const new_rep = new ReplikaInstance(selected_replikas[0], channel);
+            const new_rep = new ReplikaInstance(replika, channel);
             const conn_res = await new_rep.connect();
             if (conn_res == -1) {
                 await interaction.channel.send('Couldn\'t connect to the Replika server. Please try again later.');
@@ -36,6 +42,7 @@ module.exports = {
                 return;
             }
 
+            // TODO: Improve this
             await delay(4000);
             if (new_rep.connected) {
                 await interaction.channel.send('Login successful! You may start chatting now.');
@@ -47,6 +54,9 @@ module.exports = {
         }
         else {
             const [r0, r1] = selected_replikas;
+            if (active.has(r0.user_id) || active.has(r1.user_id)) {
+                await interaction.channel.send('Replika is already active. Please disconnect it first.');
+            }
 
             const new_rep = new ReplikaDualInstance([r0, r1], channel);
             const conn_res = await new_rep.connect();
@@ -54,6 +64,8 @@ module.exports = {
                 await interaction.channel.send('Couldn\'t connect to the Replika server. Please try again later.');
                 return;
             }
+
+            // TODO: Improve this.
             await delay(2000);
             if (new_rep.connected.every(Boolean)) {
                 await interaction.channel.send('Login successful!');
