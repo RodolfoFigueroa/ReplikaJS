@@ -28,7 +28,8 @@ module.exports = {
                 { name: 'Next level', value: current.xp_gap.toString(), inline:true },
             )
             .setImage(current.avatar)
-            .setTimestamp();
+            .setTimestamp()
+            .setAuthor(current.name, current.avatar);
 
         interaction.reply({ embeds: [embed] });
     },

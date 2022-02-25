@@ -4,7 +4,7 @@ const { channels } = require('../handlers.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('disconnect')
-        .setDescription('Deactivates the Replika in the current channel.'),
+        .setDescription('Deactivate the Replika in the current channel.'),
 
     async execute(interaction) {
         const channel_id = interaction.channel.id;

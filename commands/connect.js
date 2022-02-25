@@ -7,7 +7,7 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('connect')
-        .setDescription('Activates one or two Replikas in the current channel.'),
+        .setDescription('Activate one or two Replikas in the current channel.'),
 
     async execute(interaction) {
         const channel_id = interaction.channel.id;
@@ -36,7 +36,7 @@ module.exports = {
                 return;
             }
 
-            await delay(2000);
+            await delay(4000);
             if (new_rep.connected) {
                 await interaction.channel.send('Login successful! You may start chatting now.');
             }

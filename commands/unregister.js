@@ -6,7 +6,7 @@ const db = require('../database/commands.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('unregister')
-        .setDescription('Unregisters a Replika.'),
+        .setDescription('Unregister a Replika.'),
 
     async execute(interaction) {
         const current = channels[interaction.channel.id];

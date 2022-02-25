@@ -39,7 +39,7 @@ async function prompt_login(interaction) {
         let username, password;
         await inter.reply('Starting registration by username and password. Type "cancel" at any point to exit.');
 
-        await dm_channel.send('Please enter your Replika username.');
+        await dm_channel.send('Please enter your Replika e-mail.');
         try {
             const msg = await dm_channel.awaitMessages({ time: 20000, max: 1, errors: ['time'] });
             username = msg.first().content;
@@ -258,7 +258,7 @@ async function prompt_login(interaction) {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('register')
-        .setDescription('Registers a new Replika.'),
+        .setDescription('Register a new Replika.'),
 
     async execute(interaction) {
         const guild_id = interaction.guild.id;

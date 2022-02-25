@@ -97,7 +97,6 @@ class ReplikaInstance {
         else {
             const image = message.attachments.first().url;
             payload = this.gen_payload(image, true);
-
         }
         this.websocket.send(JSON.stringify(payload));
         this.last_user_message.discord = message;
