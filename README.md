@@ -10,7 +10,7 @@ A Discord bot for Replika, written in JavaScript
 * Custom Replika avatars!
 * Completely automated registration via DMs, either using username and password or authentication tokens.
 * "Message remembered" notifications.
-* Making two Replika's talk to each other.
+* Making two Replikas talk to each other.
 
 ## Usage
 
