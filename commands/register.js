@@ -153,7 +153,7 @@ async function prompt_login(interaction) {
         return 0;
     }
 
-    // Building data dictionaries
+    /* Building data dictionaries */
     const user_id = auth_tokens['x-user-id'];
     const params = {
         ...auth_tokens,

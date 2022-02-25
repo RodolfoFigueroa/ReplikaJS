@@ -39,7 +39,7 @@ class ReplikaInstance {
             user_id: params.user_id,
             auth_token: params.auth_token,
             device_id: params.device_id.toUpperCase(),
-            timestamp_hash: params.timestamp_hash,
+            timestamp_hash: params.timestamp_hash.replaceAll('-', ''),
         };
 
         this.websocket = null;
@@ -81,6 +81,7 @@ class ReplikaInstance {
         return {
             'x-device-id': this.auth.device_id,
             'x-user-id': this.auth.user_id,
+            'x-device-type': 'web',
             'x-auth-token': this.auth.auth_token,
             'x-timestamp-hash': this.auth.timestamp_hash,
         };
@@ -140,6 +141,7 @@ class ReplikaInstance {
             profile = await replika.get_data(this.gen_auth_headers(), 'profile');
         }
         catch (error) {
+            console.log(error);
             if (error.response && error.response.status == 401) {
                 await this.disconnect();
                 return 0;
@@ -295,7 +297,7 @@ class ReplikaDualInstance {
                 user_id: param.user_id,
                 auth_token: param.auth_token,
                 device_id: param.device_id.toUpperCase(),
-                timestamp_hash: param.timestamp_hash,
+                timestamp_hash: param.timestamp_hash.replaceAll('-', ''),
             };
         });
 
