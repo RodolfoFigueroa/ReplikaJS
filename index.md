@@ -4,4 +4,4 @@
 
 ## Privacy Policy
 
-[Click here](http://example.com)
+[Click here](PRIVACY.html)
