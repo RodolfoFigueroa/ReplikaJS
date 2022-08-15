@@ -1,4 +1,4 @@
-# ReplikaDiscordJS
+# ReplikaJS
 A Discord bot for Replika, written in JavaScript
 
 ## Features
