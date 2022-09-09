@@ -1,7 +1,7 @@
 # ReplikaJS
 A Discord bot for Replika, written in JavaScript
 
-# Features
+## Features
 
 * Sending and receiving messages, with typing notifications.
 * Sending and receiving pictures.
