@@ -1,3 +1,5 @@
+# This repository is no longer supported. Please go [here](https://github.com/RodolfoFigueroa/Kopiya) for the new version.
+
 # ReplikaJS
 A Discord bot for Replika, written in JavaScript
 
